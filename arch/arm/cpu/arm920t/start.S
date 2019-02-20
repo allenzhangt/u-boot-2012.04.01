@@ -110,6 +110,10 @@ FIQ_STACK_START:
 IRQ_STACK_START_IN:
 	.word	0x0badc0de
 
+.globl base_sp
+base_sp:
+	.long 0
+
 /*
  * the actual start code
  */
@@ -226,11 +230,14 @@ call_board_init_f:
 
 	/* unsigned int的值存在r0里，正好给board_init_r */
 	ldr r1, _TEXT_BASE
+	ldr sp, base_sp		/* 重新设置栈 */
 
 	/* 调用第二阶段的代码 */
 	bl  board_init_r
 
 
+
+	
 /*
  * We are done. Do not return, instead branch to second part of board
  * initialization, now running from RAM.

@@ -262,6 +262,8 @@ unsigned int board_init_f(ulong bootflag)
 	init_fnc_t **init_fnc_ptr;
 	gd_t *id;
 	ulong addr, addr_sp;
+	extern ulong base_sp;
+		
 #ifdef CONFIG_PRAM
 	ulong reg;
 #endif
@@ -436,6 +438,7 @@ unsigned int board_init_f(ulong bootflag)
 	debug("relocation Offset is: %08lx\n", gd->reloc_off);
 	memcpy(id, (void *)gd, sizeof(gd_t));
 
+	base_sp = addr_sp;
 	//relocate_code(addr_sp, id, addr);
 	return (unsigned int)id;
 	
@@ -463,7 +466,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 #if !defined(CONFIG_SYS_NO_FLASH)
 	ulong flash_size;
 #endif
-
+	puts("board_init_r\n");
 	gd = id;
 
 	gd->flags |= GD_FLG_RELOC;	/* tell others: relocation done */
@@ -526,8 +529,9 @@ void board_init_r(gd_t *id, ulong dest_addr)
 		print_size(flash_size, "\n");
 # endif /* CONFIG_SYS_FLASH_CHECKSUM */
 	} else {
+		puts("0 KB\n");
 		puts(failed);
-		hang();
+		//hang();
 	}
 #endif
 
