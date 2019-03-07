@@ -507,15 +507,15 @@ int nand_write_skip_bad(nand_info_t *nand, loff_t offset, size_t *length,
 		*length = 0;
 		return -EINVAL;
 	}
-	//这里不设为1的话这个函数会返回0（？？？）
-	need_skip = 1;//check_skip_len(nand, offset, *length);
+
+	need_skip = check_skip_len(nand, offset, *length);
 	if (need_skip < 0) {
 		printf ("Attempt to write outside the flash area\n");
 		*length = 0;
 		return -EINVAL;
 	}
 
-	if (!need_skip && !(flags & WITH_DROP_FFS)) {
+	if (!need_skip && !(flags & WITH_DROP_FFS) && !(flags & WITH_YAFFS_OOB)) {
 		rval = nand_write (nand, offset, length, buffer);
 		if (rval == 0)
 			return 0;
